@@ -7,6 +7,18 @@ on:
     branches: [main]
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run lint.mjs test suite
+        run: node --test scripts/*.test.mjs
+
   self-lint:
     runs-on: ubuntu-latest
     steps:
@@ -16,8 +28,7 @@ jobs:
         with:
           node-version: 22
 
-      # scripts/lint.mjs never fails on findings (they're suggestions, not
-      # verdicts — see SKILL.md), so this step is informational only: it
-      # surfaces regressions in the skill's own docs without blocking CI.
+      # scripts/lint.mjs never fails on findings (they're suggestions, not verdicts — see SKILL.md), so this step is informational only: it surfaces regressions in the skill's own docs and comments without blocking CI.
+      # Covers everything with prose or comments in the repo: docs, the scripts themselves (# and // comments), and the workflow files (# comments).
       - name: Self-lint prose for unnatural line breaks
-        run: node scripts/lint.mjs SKILL.md README.md README.ja.md CHANGELOG.md references/*.md
+        run: node scripts/lint.mjs SKILL.md README.md README.ja.md CHANGELOG.md references/*.md scripts/*.mjs .github/workflows/*.yml

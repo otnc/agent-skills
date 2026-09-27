@@ -8,10 +8,8 @@
  *   node scripts/lint.mjs <file> [<file> ...]
  *   node scripts/lint.mjs --json <file>
  *
- * This is a lint, not a gate: it always exits 0 regardless of how many
- * findings it reports. It only exits 1 when an input file can't be read.
- * A finding is a suggestion, not a verdict — deciding whether to fix it
- * is left to the human or the AI reading the output.
+ * This is a lint, not a gate: it always exits 0 regardless of how many findings it reports. It only exits 1 when an input file can't be read.
+ * A finding is a suggestion, not a verdict — deciding whether to fix it is left to the human or the AI reading the output.
  */
 
 import { readFileSync } from "node:fs";
@@ -20,8 +18,7 @@ import { readFileSync } from "node:fs";
 // and is never flagged.
 const SENTENCE_END_CHARS = "。」』.!?！？:;：；」)]}>*`";
 
-// A line ending in one of these single Japanese particles/conjunctions is a
-// strong signal that the sentence was cut off mid-way.
+// A line ending in one of these single Japanese particles/conjunctions is a strong signal that the sentence was cut off mid-way.
 const JP_TRAILING_PARTICLES = [
   "は", "が", "を", "に", "で", "と", "も", "の", "へ", "や", "な", "な、",
   "から", "まで", "より", "ので", "けど", "けれど", "しかし", "ただし",
@@ -70,7 +67,7 @@ function endsWithSentenceEndChar(text) {
 }
 
 /** Returns a reason string if this looks like a suspicious break, otherwise null. */
-function looksLikeMidSentenceBreak(current, nxt) {
+function looksLikeMidSentenceBreak(current, nxt, isMarkdown) {
   const stripped = current.replace(/\s+$/, "");
   if (!stripped) return null;
   if (isIntentionalBreak(current)) return null;
@@ -78,10 +75,13 @@ function looksLikeMidSentenceBreak(current, nxt) {
 
   const nextStripped = nxt.trim();
   if (!nextStripped) return null; // next line is blank -> paragraph boundary
+  // These are Markdown structural markers, not meaningful outside Markdown:
+  // in a #-comment language a "# " continuation line would itself match
+  // HEADING_RE, and in a /** */ block a " * " continuation line would match
+  // LIST_ITEM_RE, silently suppressing every real finding in that file.
   if (
-    LIST_ITEM_RE.test(nxt) ||
-    HEADING_RE.test(nxt) ||
-    BLOCKQUOTE_RE.test(nxt)
+    isMarkdown &&
+    (LIST_ITEM_RE.test(nxt) || HEADING_RE.test(nxt) || BLOCKQUOTE_RE.test(nxt))
   ) {
     return null; // next line starts a new structural element
   }
@@ -98,15 +98,12 @@ function looksLikeMidSentenceBreak(current, nxt) {
     return `line ends with the conjunction/preposition/article "${word}"`;
   }
 
-  // English line with no terminal punctuation, continuing into a
-  // lowercase-initial next line: likely a mechanical wrap.
+  // English line with no terminal punctuation, continuing into a lowercase-initial next line: likely a mechanical wrap.
   if (/[A-Za-z]/.test(body) && /^[a-z]/.test(nextStripped)) {
     return "no terminal punctuation, and the next line continues in lowercase (English)";
   }
 
-  // Japanese line with no terminal punctuation and no trailing particle,
-  // continuing into a line starting with hiragana/kanji: likely a
-  // mechanical wrap.
+  // Japanese line with no terminal punctuation and no trailing particle, continuing into a line starting with hiragana/kanji: likely a mechanical wrap.
   if (
     /[぀-んァ-ヶ一-龠]/.test(body) &&
     /^[぀-んァ-ヶ一-龠]/.test(nextStripped)
@@ -172,7 +169,7 @@ function scanFile(path) {
     // continuation.
     if (!isMarkdown && !isCommentLine(nxt)) continue;
 
-    const reason = looksLikeMidSentenceBreak(line, nxt);
+    const reason = looksLikeMidSentenceBreak(line, nxt, isMarkdown);
     if (reason) {
       findings.push({
         file: path,

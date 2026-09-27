@@ -40,7 +40,8 @@ fix-unnatural-line-breaks/
 │   ├── rules.md          # 直し方のルール
 │   └── examples.md       # before/after の対比例
 ├── scripts/
-│   └── lint.mjs          # 疑わしい改行を機械的に検出するスクリプト(Node.js、依存パッケージなし)
+│   ├── lint.mjs          # 疑わしい改行を機械的に検出するスクリプト(Node.js、依存パッケージなし)
+│   └── lint.test.mjs     # lint.mjsのnode:testテストスイート(`node --test scripts/*.test.mjs`)
 ├── README.md
 ├── README.ja.md
 └── LICENSE
@@ -90,7 +91,10 @@ Node.jsが無い環境では、Claude が `references/detection.md` の観点で
 README・箇条書き・コードコメント(TypeScript/Python)のbefore/after対比。
 
 **scripts/lint.mjs**
-依存パッケージなしで動くNode.js製の検出スクリプト。行末の文末記号・助詞・接続語・次の行の書き出しから、機械的な折り返しの疑いを洗い出します。出力メッセージは(チェック対象のファイルの言語に関わらず)英語です。
+依存パッケージなしで動くNode.js製の検出スクリプト。行末の文末記号・助詞・接続語・次の行の書き出しから、機械的な折り返しの疑いを洗い出します。Markdown以外のファイルでは、コメント行(`//`・`#`・`*`・`///`・`;;`)同士だけを比較するので、`#`でコメントを書く言語(Python・Shell・Ruby・YAMLなど)でも、C系の`//`・`/** */`コメントでも動作します。出力メッセージは(チェック対象のファイルの言語に関わらず)英語です。検出結果は網羅的ではありません(`references/detection.md`参照)。
+
+**scripts/lint.test.mjs**
+`lint.mjs`の中核的な検出動作・誤検出回避動作を検証する`node:test`テストスイート。`node --test scripts/*.test.mjs`で実行できます。
 
 ## クレジット
 
