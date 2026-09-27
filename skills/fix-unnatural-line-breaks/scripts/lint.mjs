@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 /**
- * Detects line breaks that look like they were mechanically wrapped
- * mid-sentence, in Markdown documentation or code comments. Plain Node.js,
- * no dependencies.
+ * Detects line breaks that look like they were mechanically wrapped mid-sentence, in Markdown documentation or code comments. Plain Node.js, no dependencies.
  *
  * Usage:
  *   node scripts/lint.mjs <file> [<file> ...]
@@ -14,36 +12,36 @@
 
 import { readFileSync } from "node:fs";
 
-// A line ending in one of these characters is considered "sentence-complete"
-// and is never flagged.
+// A line ending in one of these characters is considered "sentence-complete" and is never flagged.
 const SENTENCE_END_CHARS = "。」』.!?！？:;：；」)]}>*`";
 
 // A line ending in one of these single Japanese particles/conjunctions is a strong signal that the sentence was cut off mid-way.
 const JP_TRAILING_PARTICLES = [
   "は", "が", "を", "に", "で", "と", "も", "の", "へ", "や", "な", "な、",
   "から", "まで", "より", "ので", "けど", "けれど", "しかし", "ただし",
+  "だけ", "とも", "ため", "のみ", "ほど", "くらい", "ぐらい", "など",
+  "って", "たり", "ながら", "つつ", "やら", "し",
 ];
 
-// A line ending in one of these English words (preposition/conjunction/
-// article/etc.) is treated the same way.
+// A line ending in one of these English words (preposition/conjunction/article/etc.) is treated the same way.
 const EN_TRAILING_WORDS = new Set([
   "a", "an", "the", "and", "or", "but", "of", "to", "with", "in", "on",
   "at", "for", "that", "which", "who", "as", "is", "are", "was", "were",
   "be", "been", "this", "these", "those", "it", "its", "not",
 ]);
 
-const CODE_FENCE_RE = /^\s*```/;
+// Allows an optional comment prefix before the fence, so an example block nested inside a /** */ or # comment (e.g. " * ```ts") is recognized too — otherwise its contents (real code, not prose) get scanned as if they were comment text.
+const CODE_FENCE_RE = /^\s*(?:\/\/|#|\*|\/\/\/|;;)?\s*```/;
 const TABLE_ROW_RE = /^\s*\|.*\|\s*$/;
 const LIST_ITEM_RE = /^\s*([-*+]|\d+[.)])\s+/;
 const HEADING_RE = /^\s*#{1,6}\s+/;
 const COMMENT_PREFIX_RE = /^\s*(\/\/|#|\*|\/\/\/|;;)\s?/;
 const BLOCKQUOTE_RE = /^\s*>/;
+const SHEBANG_RE = /^#!/;
+// A JSDoc-style inline tag ({@link ...}, {@see ...}, {@linkcode ...}, etc.): a next line opening with one is continuing the previous line by construction, regardless of how the previous line ends.
+const INLINE_TAG_RE = /^\{@\w+/;
 
-// A YAML mapping key ("name: ...", "- type: markdown", "attributes:").
-// Used to skip structural lines in .yml/.yaml files so they aren't mistaken
-// for wrapped prose; this deliberately does not try to parse block scalars
-// (`key: |`) since that requires tracking indentation, so genuinely wrapped
-// prose inside a block scalar can still slip through undetected.
+// A YAML mapping key ("name: ...", "- type: markdown", "attributes:"). Used to skip structural lines in .yml/.yaml files so they aren't mistaken for wrapped prose; this deliberately does not try to parse block scalars (`key: |`) since that requires tracking indentation, so genuinely wrapped prose inside a block scalar can still slip through undetected.
 const YAML_KEY_RE = /^\s*(-\s+)?[A-Za-z0-9_.-]+:(\s|$)/;
 const YAML_EXTENSIONS = [".yml", ".yaml"];
 const MARKDOWN_EXTENSIONS = [".md", ".markdown", ".mdx"];
@@ -87,6 +85,12 @@ function looksLikeMidSentenceBreak(current, nxt, isMarkdown) {
   }
 
   const body = stripCommentPrefix(stripped);
+
+  // A line ending in the reading-pause comma is a near-certain break — that's what "、" is for.
+  if (body.endsWith("、")) {
+    return 'line ends with the reading-pause comma "、"';
+  }
+
   for (const particle of JP_TRAILING_PARTICLES) {
     if (body.endsWith(particle)) {
       return `line ends with the particle/conjunction "${particle}"`;
@@ -98,15 +102,24 @@ function looksLikeMidSentenceBreak(current, nxt, isMarkdown) {
     return `line ends with the conjunction/preposition/article "${word}"`;
   }
 
+  // For non-Markdown files, nextStripped still carries its own comment prefix ("// ", "* ", "# ", ...) — strip it too, or the continuation checks below compare against the prefix character instead of the real text and never fire.
+  const nextBody = isMarkdown
+    ? nextStripped
+    : stripCommentPrefix(nextStripped);
+
+  if (INLINE_TAG_RE.test(nextBody)) {
+    return "next line continues with an inline tag (e.g. {@link ...})";
+  }
+
   // English line with no terminal punctuation, continuing into a lowercase-initial next line: likely a mechanical wrap.
-  if (/[A-Za-z]/.test(body) && /^[a-z]/.test(nextStripped)) {
+  if (/[A-Za-z]/.test(body) && /^[a-z]/.test(nextBody)) {
     return "no terminal punctuation, and the next line continues in lowercase (English)";
   }
 
   // Japanese line with no terminal punctuation and no trailing particle, continuing into a line starting with hiragana/kanji: likely a mechanical wrap.
   if (
     /[぀-んァ-ヶ一-龠]/.test(body) &&
-    /^[぀-んァ-ヶ一-龠]/.test(nextStripped)
+    /^[぀-んァ-ヶ一-龠]/.test(nextBody)
   ) {
     return "no terminal punctuation, and the next line continues (Japanese)";
   }
@@ -115,9 +128,7 @@ function looksLikeMidSentenceBreak(current, nxt, isMarkdown) {
 }
 
 /**
- * If the file opens with a `---` YAML frontmatter block, returns the index
- * of its closing `---` line; otherwise returns -1. Frontmatter is key:
- * value data, not prose, so it's excluded from scanning.
+ * If the file opens with a `---` YAML frontmatter block, returns the index of its closing `---` line; otherwise returns -1. Frontmatter is key: value data, not prose, so it's excluded from scanning.
  */
 function frontmatterEndIndex(lines) {
   if (lines.length === 0 || lines[0].replace(/\s+$/, "") !== "---") return -1;
@@ -128,6 +139,8 @@ function frontmatterEndIndex(lines) {
 }
 
 function isCommentLine(line) {
+  // A shebang matches COMMENT_PREFIX_RE (bare "#") but isn't prose, and pairing its tail with a real comment line produces false positives.
+  if (SHEBANG_RE.test(line)) return false;
   return COMMENT_PREFIX_RE.test(line);
 }
 
@@ -157,16 +170,12 @@ function scanFile(path) {
     }
     if (inCodeFence) continue;
     if (TABLE_ROW_RE.test(line)) continue;
-    // In a non-Markdown source file, only comment lines are prose; actual
-    // code is never a candidate (it isn't sentences at all, and comparing
-    // code line N to code line N+1 produces constant false positives).
+    // In a non-Markdown source file, only comment lines are prose; actual code is never a candidate (it isn't sentences at all, and comparing code line N to code line N+1 produces constant false positives).
     if (!isMarkdown && !isCommentLine(line)) continue;
     if (i + 1 >= lines.length) continue;
 
     const nxt = lines[i + 1];
-    // Likewise, don't compare a comment line to a following line of actual
-    // code — that's the end of the comment block, not a mid-sentence
-    // continuation.
+    // Likewise, don't compare a comment line to a following line of actual code — that's the end of the comment block, not a mid-sentence continuation.
     if (!isMarkdown && !isCommentLine(nxt)) continue;
 
     const reason = looksLikeMidSentenceBreak(line, nxt, isMarkdown);

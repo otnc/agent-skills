@@ -16,10 +16,11 @@ Treat a line-ending break as suspicious when any of the following hold.
 
 Japanese has no spaces between words, so unnatural breaks are visually less obvious than in English. Watch especially for breaks at these positions.
 
-- Right before a `、` (breaking right after `、` is fine; breaking right before it, so the next line starts with `、`, is not).
-- Right after or right before a single-character particle left stranded at the end or start of a line — for example, a line ending in `これは` with the next line continuing `便利です`.
+- Right after a `、` (a line ending in the reading-pause comma is a near-certain break — that comma exists precisely because the sentence keeps going) and right before one (so the next line starts with `、`).
+- Right after or right before a single-character particle left stranded at the end or start of a line — for example, a line ending in `これは` with the next line continuing `便利です`. This extends past the single-particle case: continuing conjunctions like `だけ` `とも` `ため` `のみ` `ほど` `くらい`/`ぐらい` `など` `って` `たり` `ながら` `つつ` `やら` `し` are just as strong a signal.
 - In the middle of a compound predicate or auxiliary verb — for example, a line ending in `〜することが` with the next line continuing `できます`.
 - Right after an opening bracket (`「` or `(`) or right before a closing one (`」` or `)`).
+- In a code comment, a next line that opens with a JSDoc-style inline tag (`{@link ...}`, `{@see ...}`, etc.) — that's continuing the previous line by construction, no matter how the previous line ends.
 
 ## English-specific cues
 
@@ -39,10 +40,11 @@ The following are fine as-is and should not be "fixed."
 - A long URL or a standalone code line.
 - Poetry, code samples, or quotations where the line break itself carries meaning.
 - Structured config such as CI workflow YAML, JSON, or shell scripts embedded in a YAML block scalar (`key: |`). Nearly every line there is either a `key: value` pair or executable script, not prose, and `scripts/lint.mjs` has no real YAML parser to tell the difference reliably — treat such files as out of scope entirely rather than trying to lint them.
+- A shebang line (`#!/usr/bin/env node`). It matches a `#` comment prefix but isn't prose, and shouldn't be paired with the real comment line after it.
 
 ## The lint script doesn't catch everything
 
-`scripts/lint.mjs` only flags a line ending on a tracked particle/word, or a break with no sentence-final punctuation before a lowercase/hiragana/kanji continuation. Real unnatural breaks fall outside those rules all the time — for example, a line that ends right after a comma with a capitalized word following, or a Japanese line that ends on a noun rather than a particle but is still mid-clause. Running the script narrows down where to look; it does not replace reading the file. Always walk every paragraph and comment block by eye using the criteria above, including the parts the script left unflagged.
+`scripts/lint.mjs` only flags a line ending in `、`, on a tracked particle/word, on an inline-tag continuation, or a break with no sentence-final punctuation before a lowercase/hiragana/kanji continuation. Real unnatural breaks fall outside those rules all the time — for example, a Japanese line that ends on a noun rather than a particle but is still mid-clause, with no comma to catch it either. Running the script narrows down where to look; it does not replace reading the file. Always walk every paragraph and comment block by eye using the criteria above, including the parts the script left unflagged.
 
 ## Where to look, by file type
 

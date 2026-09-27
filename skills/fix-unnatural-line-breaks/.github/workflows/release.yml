@@ -32,8 +32,7 @@ jobs:
       - name: Self-lint prose for unnatural line breaks
         run: node scripts/lint.mjs SKILL.md README.md README.ja.md CHANGELOG.md references/*.md scripts/*.mjs .github/workflows/*.yml
 
-      # Computed before the new tag is created, so "the previous tag" can't
-      # accidentally resolve to the tag this run is about to make.
+      # Computed before the new tag is created, so "the previous tag" can't accidentally resolve to the tag this run is about to make.
       - name: Build release notes from commits since the previous tag
         run: |
           PREV_TAG="$(git tag --sort=-creatordate | head -n1 || true)"

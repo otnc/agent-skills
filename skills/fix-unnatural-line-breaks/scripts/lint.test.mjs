@@ -117,6 +117,90 @@ test("flags a wrapped sentence in a JSDoc/block comment even when the next line 
   assert.equal(findings[0].line, 2);
 });
 
+test("flags a Japanese comment continuation that only got missed because the next line's comment prefix was never stripped", () => {
+  // Regression test (GitHub issue #1, root cause): the continuation checks compared `body` (prefix stripped) against the *raw* trimmed next line, which for a non-Markdown file is almost always still "* ...", "// ...", or "# ...", not the real text. Both continuation rules were effectively dead code for code comments.
+  const content =
+    "/**\n" +
+    " * OS標準のユーザーデータディレクトリ配下に結果保存用フォルダを決定する\n" +
+    " * 実装になっている\n" +
+    " */\n";
+  const findings = findingsFor(content, "sample.ts");
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].line, 2);
+});
+
+test("flags a line ending in the reading-pause comma even when no tracked particle matches exactly", () => {
+  // Regression test (GitHub issue #1): "、" itself is the strongest signal of a mid-sentence break, but there was no dedicated rule for it — a particle followed by "、" (e.g. "実装で、") didn't match the exact-suffix particle check either.
+  const content =
+    "/**\n" +
+    " * npmパッケージの更新では消えない場所に置くための実装で、\n" +
+    " * 外部パッケージには依存しない。\n" +
+    " */\n";
+  const findings = findingsFor(content, "sample.ts");
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].reason, 'line ends with the reading-pause comma "、"');
+});
+
+test("flags a line ending in one of the broadened particles (だけ)", () => {
+  // Regression test (GitHub issue #1): JP_TRAILING_PARTICLES was missing several common continuing particles found in real audited code, including だけ/とも/ため/のみ/ほど/くらい/ぐらい/など/って/たり/ながら/つつ/やら/し.
+  const content =
+    "/**\n" +
+    " * 未指定のフィールドだけ\n" +
+    " * ここでの設定にフォールバックする。\n" +
+    " */\n";
+  const findings = findingsFor(content, "sample.ts");
+  assert.equal(findings.length, 1);
+  assert.equal(
+    findings[0].reason,
+    'line ends with the particle/conjunction "だけ"',
+  );
+});
+
+test("flags a line whose continuation is a JSDoc inline tag like {@link ...}", () => {
+  // Regression test (GitHub issue #1): a next line opening with {@link ...} continues the previous line by construction, even when the previous line ends on a dictionary-form verb with no particle and no trailing punctuation.
+  const content =
+    "/**\n" +
+    " * 環境変数から設定を読み取り、CLI全体で使い回す\n" +
+    " * {@link ConnpassClient} を組み立てる。\n" +
+    " */\n";
+  const findings = findingsFor(content, "sample.ts");
+  assert.equal(findings.length, 1);
+  assert.equal(
+    findings[0].reason,
+    "next line continues with an inline tag (e.g. {@link ...})",
+  );
+});
+
+test("does not pair a shebang line with the real comment line after it", () => {
+  // Regression test (GitHub issue #1, edge case): "#!/usr/bin/env node" matches COMMENT_PREFIX_RE (bare "#"), so without an exclusion it gets treated as a prose comment line and can be falsely paired with the next real comment.
+  const content =
+    "#!/usr/bin/env node\n" +
+    "// A short, complete comment.\n";
+  assert.deepEqual(findingsFor(content, "sample.ts"), []);
+});
+
+test("still flags a real wrap on the line right after a shebang", () => {
+  const content =
+    "#!/usr/bin/env node\n" +
+    "// This comment sentence is split across two lines and\n" +
+    "// continues here.\n";
+  const findings = findingsFor(content, "sample.ts");
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].line, 2);
+});
+
+test("does not scan an example code block fenced inside a JSDoc comment", () => {
+  // Regression test (GitHub issue #1, edge case): CODE_FENCE_RE used to require the fence at the very start of the line, so a fence prefixed with " * " (nested inside /** */) was never recognized, and the example code inside it got scanned as if it were comment prose.
+  const content =
+    "/**\n" +
+    " * Usage example:\n" +
+    " * ```ts\n" +
+    " * const of = shuffle([1, 2, 3]);\n" +
+    " * ```\n" +
+    " */\n";
+  assert.deepEqual(findingsFor(content, "sample.ts"), []);
+});
+
 test("prints a plain-text summary when no issues are found", () => {
   const dir = mkdtempSync(join(tmpdir(), "lint-test-"));
   const file = join(dir, "clean.md");
