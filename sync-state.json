@@ -1,6 +1,22 @@
 {
   "version": 1,
   "sources": {
+    "otnc/skills_ai-agent-saving-tech": {
+      "tag": "v0.1.0",
+      "dirs": [
+        "token-saver",
+        "token-saver-claude-code",
+        "token-saver-codex",
+        "token-saver-copilot",
+        "token-saver-cursor",
+        "token-saver-opencode"
+      ],
+      "license": {
+        "spdxId": "MIT",
+        "url": "https://github.com/otnc/skills_ai-agent-saving-tech/blob/main/LICENSE"
+      },
+      "syncedAt": "2026-09-27T07:52:48Z"
+    },
     "otnc/skills_fix-unnatural-line-breaks": {
       "tag": "v0.5.0",
       "dirs": [
