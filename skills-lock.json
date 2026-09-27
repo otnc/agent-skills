@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "fix-unnatural-line-breaks": {
+      "source": "otnc/skills_fix-unnatural-line-breaks",
+      "sourceType": "github",
+      "skillPath": "skills/fix-unnatural-line-breaks/SKILL.md",
+      "computedHash": "f968f49f5b784d9bd6517434b7a7ed630473642c13bbd78b40cc07a609668325"
+    },
+    "kiritan": {
+      "source": "otnc/kiritan",
+      "sourceType": "github",
+      "skillPath": "skills/kiritan/SKILL.md",
+      "computedHash": "dc593c40edc8eb8f808e7495ca60b8845ae8236f7bb52cea32ca89ca4288abb6"
+    }
+  }
+}
