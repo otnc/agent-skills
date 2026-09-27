@@ -1,6 +1,8 @@
 ---
 name: fix-unnatural-line-breaks
 description: Detects and fixes "unnatural line breaks" in prose (Markdown/README-style documentation, and code comments or docstrings) — newlines inserted mid-sentence just to keep lines under some fixed column width. Works on both English and Japanese text. Use for requests like "fix the line breaks," "this is hard-wrapped," "the text is cut off mid-sentence," "unnatural line wrapping," "改行がおかしい," "文の途中で改行が入っている," "一定の文字数で折り返されている," as well as when writing, reviewing, or rewriting documentation and comments. Does not cover restructuring bullet lists, rewording headings, or removing AI-sounding phrasing/redundancy (those belong to other skills).
+license: MIT
+compatibility: Works with any agent that supports Agent Skills. The optional detector script needs Node.js 18+.
 metadata:
   trigger: line-break/line-wrap checks and fixes in documentation and code comments
   language: en, ja
@@ -37,7 +39,7 @@ The target is both prose documentation (Markdown, README files) and code comment
 
 1. Identify what kind of file you're looking at — Markdown documentation, or code comments.
 2. Read `references/detection.md` and keep the relevant criteria in mind for the language(s) involved (English, Japanese, or both mixed in the same file).
-3. If Node.js is available (it almost always is, since Claude Code itself runs on it), run `node scripts/lint.mjs <file>` to mechanically surface suspicious breaks (add `--json` for structured output). No install or dependency is needed — it's plain Node.js with no third-party packages. Without Node.js, do the same review by eye using `references/detection.md`.
+3. If Node.js is available (most coding agents run on it or alongside it), run `node <this skill's directory>/scripts/lint.mjs <file>` from the project root to mechanically surface suspicious breaks (add `--json` for structured output). No install or dependency is needed — it's plain Node.js with no third-party packages. Without Node.js, do the same review by eye using `references/detection.md`.
 4. **`lint.mjs` output is not the full list of what to fix.** It's a small set of regex heuristics, so it both flags things that are fine (false positives) and misses real unnatural breaks it has no rule for (false negatives) — a break that doesn't end in a tracked particle/word but is still mid-sentence, for instance. Treat it as a starting hint, not a checklist to clear. Filter out its false positives (code blocks, tables, intentional breaks), then still read every paragraph and comment block in the file yourself against `references/detection.md`, including the parts the tool didn't flag at all.
 5. Apply the fixes following `references/rules.md`: merge broken sentences back into one line, and leave paragraph/list/heading/code-block boundaries untouched.
 6. Re-read the fixed paragraph to confirm the meaning and tone haven't shifted.
