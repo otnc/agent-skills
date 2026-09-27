@@ -1,0 +1,26 @@
+# Go build artifacts
+*.exe
+
+node_modules/
+
+# The skills CLI keeps the canonical copy in .agents/ and symlinks every other
+# agent directory to it. Only .agents/ is committed; the generated links are not.
+/.claude/
+/.codex/
+/.cursor/
+/.copilot/
+/.gemini/
+/.opencode/
+/.windsurf/
+/.qwen/
+/.junie/
+/.iflow/
+/.roo/
+/.trae/
+/.goose/
+/.grok/
+/.crush/
+/.continue/
+/.augment/
+/.codebuddy/
+/agent/
