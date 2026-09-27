@@ -1,0 +1,23 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  self-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # scripts/lint.mjs never fails on findings (they're suggestions, not
+      # verdicts — see SKILL.md), so this step is informational only: it
+      # surfaces regressions in the skill's own docs without blocking CI.
+      - name: Self-lint prose for unnatural line breaks
+        run: node scripts/lint.mjs SKILL.md README.md README.ja.md CHANGELOG.md references/*.md

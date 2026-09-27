@@ -1,4 +1,16 @@
 {
   "version": 1,
-  "sources": {}
+  "sources": {
+    "otnc/skills_fix-unnatural-line-breaks": {
+      "tag": "v0.1.0",
+      "dirs": [
+        "fix-unnatural-line-breaks"
+      ],
+      "license": {
+        "spdxId": "MIT",
+        "url": "https://github.com/otnc/skills_fix-unnatural-line-breaks/blob/main/LICENSE"
+      },
+      "syncedAt": "2026-09-27T07:52:47Z"
+    }
+  }
 }
