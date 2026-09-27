@@ -24,6 +24,7 @@ The target is both prose documentation (Markdown, README files) and code comment
 - When reviewing or fixing existing prose, use the criteria in `references/detection.md` to find breaks that cut a sentence in the middle, then fix them following `references/rules.md`.
 - To fix one, simply remove the line break and join the two lines: insert a single space for English, and nothing (no space) for Japanese. See `references/examples.md` for concrete cases where the right join is ambiguous.
 - It's fine — expected, even — for the fixed line to become very long. The only thing that should trigger a new line break is a structural boundary (paragraph, list item, heading, code block), never a character count.
+- In a comment block, if two paragraphs need a visible separator, use an unmarked blank line (no `//`/`#`/`*`) or no separator at all — never a bare comment marker with nothing after it. Nobody writes a lone `//` by hand; see `references/rules.md`.
 
 ## Don't
 
@@ -49,4 +50,5 @@ Before calling it done, confirm:
 - [ ] No single list item is still wrapped across multiple lines (unless the item is genuinely long and that's intentional)
 - [ ] No single sentence in a code comment or docstring still spans multiple comment lines
 - [ ] The fix didn't touch code blocks, tables, URLs, or intentional line breaks
+- [ ] No comment block uses a bare `//`/`#`/`*` marker as a paragraph separator
 - [ ] Every paragraph and comment block was actually read end to end — not just the lines `lint.mjs` happened to flag

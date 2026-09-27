@@ -201,6 +201,49 @@ test("does not scan an example code block fenced inside a JSDoc comment", () => 
   assert.deepEqual(findingsFor(content, "sample.ts"), []);
 });
 
+test("flags a bare // marker used as a paragraph separator between two comment lines", () => {
+  // Regression test (GitHub issue #2): a lone "//" (or "* ", "#") line between two real comment lines isn't how comments actually get written by hand — real code uses an unmarked blank line or no separator at all.
+  const content =
+    "// First paragraph of the comment.\n" +
+    "//\n" +
+    "// Second paragraph of the comment.\n";
+  const findings = findingsFor(content, "sample.js");
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].line, 2);
+  assert.equal(
+    findings[0].reason,
+    "bare comment marker used as a paragraph separator — use an unmarked blank line or no separator at all",
+  );
+});
+
+test("flags a bare * marker used as a paragraph separator inside a JSDoc block", () => {
+  const content =
+    "/**\n" +
+    " * First paragraph.\n" +
+    " *\n" +
+    " * Second paragraph.\n" +
+    " */\n";
+  const findings = findingsFor(content, "sample.ts");
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].line, 3);
+});
+
+test("does not flag an unmarked blank line used as a comment paragraph separator", () => {
+  const content =
+    "// First paragraph.\n" + "\n" + "// Second paragraph.\n";
+  assert.deepEqual(findingsFor(content, "sample.js"), []);
+});
+
+test("does not flag two adjacent comment lines with no separator at all", () => {
+  const content = "// First paragraph.\n" + "// Second paragraph.\n";
+  assert.deepEqual(findingsFor(content, "sample.js"), []);
+});
+
+test("does not flag a bare comment marker that isn't sandwiched between two real comment lines", () => {
+  const content = "//\n" + "const x = 1;\n";
+  assert.deepEqual(findingsFor(content, "sample.js"), []);
+});
+
 test("prints a plain-text summary when no issues are found", () => {
   const dir = mkdtempSync(join(tmpdir(), "lint-test-"));
   const file = join(dir, "clean.md");

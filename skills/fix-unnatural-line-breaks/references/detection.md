@@ -44,7 +44,7 @@ The following are fine as-is and should not be "fixed."
 
 ## The lint script doesn't catch everything
 
-`scripts/lint.mjs` only flags a line ending in `、`, on a tracked particle/word, on an inline-tag continuation, or a break with no sentence-final punctuation before a lowercase/hiragana/kanji continuation. Real unnatural breaks fall outside those rules all the time — for example, a Japanese line that ends on a noun rather than a particle but is still mid-clause, with no comma to catch it either. Running the script narrows down where to look; it does not replace reading the file. Always walk every paragraph and comment block by eye using the criteria above, including the parts the script left unflagged.
+`scripts/lint.mjs` only flags a line ending in `、`, on a tracked particle/word, on an inline-tag continuation, a bare comment marker used as a separator, or a break with no sentence-final punctuation before a lowercase/hiragana/kanji continuation. Real unnatural breaks fall outside those rules all the time — for example, a Japanese line that ends on a noun rather than a particle but is still mid-clause, with no comma to catch it either. Running the script narrows down where to look; it does not replace reading the file. Always walk every paragraph and comment block by eye using the criteria above, including the parts the script left unflagged.
 
 ## Where to look, by file type
 
@@ -55,3 +55,5 @@ Treat each paragraph (a block separated by blank lines) as a unit, then list eve
 ### Code comments and docstrings
 
 Treat a run of consecutive comment lines (`//`, `/* */`, `#`, `"""`, etc.) as one block. If a single sentence (a unit ending in a period or `。`) spans more than one comment line, that's a strong signal of an unnatural break.
+
+Also watch for a bare comment marker (`//`, `*`, or `#` with nothing else on the line) sitting between two lines of real comment text. That's not how people actually write comments by hand — a genuine paragraph separator inside a comment block is either an unmarked blank line (no marker at all) or no separator at all, never an empty marker-only line.

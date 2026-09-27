@@ -57,7 +57,19 @@ If one bullet's description is long and has been wrapped across multiple lines, 
 
 ## Code comments and docstrings
 
-Keep the comment syntax (`//`, `#`, `*`, etc.) intact and only merge the text content. When one sentence spans several `//` lines, collapse it into a single `//` line. If the comment intentionally separates paragraphs (for example, with a blank comment line between them), keep that separation and merge within each paragraph.
+Keep the comment syntax (`//`, `#`, `*`, etc.) intact and only merge the text content. When one sentence spans several `//` lines, collapse it into a single `//` line. If the comment intentionally separates paragraphs, keep that separation and merge within each paragraph — but the separator itself should be an unmarked blank line (no `//`/`#`/`*`) or no separator at all, never a bare comment marker with nothing after it. A lone `//`/`*`/`#` line isn't something people actually write by hand; if you find one acting as a separator between two paragraphs, strip the marker so it becomes a real blank line (or drop it entirely if the two paragraphs read fine run together).
+
+```ts
+// Before (bare marker used as a separator — nobody writes this by hand)
+// First paragraph of the comment.
+//
+// Second paragraph of the comment.
+
+// After
+// First paragraph of the comment.
+
+// Second paragraph of the comment.
+```
 
 ```ts
 // Before

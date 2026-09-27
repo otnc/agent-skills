@@ -93,7 +93,7 @@ How to fix what's detected: merging at the paragraph level, deciding upfront whi
 Before/after pairs for README prose, bullet lists, and code comments (TypeScript/Python).
 
 **scripts/lint.mjs**
-A dependency-free Node.js detector. It flags likely mechanical wraps based on sentence-ending punctuation, trailing particles/conjunctions, and how the next line starts. For non-Markdown files, it only ever compares comment lines (`//`, `#`, `*`, `///`, `;;`) against each other, so it works across `#`-comment languages (Python, Shell, Ruby, YAML, ...) and C-style `//`/`/** */` comments alike. Its own output is always in English, regardless of the language of the file being checked. Its findings are not exhaustive — see `references/detection.md`.
+A dependency-free Node.js detector. It flags likely mechanical wraps based on sentence-ending punctuation, trailing particles/conjunctions, and how the next line starts, plus a bare `//`/`#`/`*` line used as a paragraph separator inside a comment block. For non-Markdown files, it only ever compares comment lines (`//`, `#`, `*`, `///`, `;;`) against each other, so it works across `#`-comment languages (Python, Shell, Ruby, YAML, ...) and C-style `//`/`/** */` comments alike. Its own output is always in English, regardless of the language of the file being checked. Its findings are not exhaustive — see `references/detection.md`.
 
 **scripts/lint.test.mjs**
 A `node:test` suite covering `lint.mjs`'s core detection and false-positive-avoidance behavior. Run it with `node --test scripts/*.test.mjs`.

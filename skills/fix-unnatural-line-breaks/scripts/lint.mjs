@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
  * Detects line breaks that look like they were mechanically wrapped mid-sentence, in Markdown documentation or code comments. Plain Node.js, no dependencies.
- *
+
  * Usage:
  *   node scripts/lint.mjs <file> [<file> ...]
  *   node scripts/lint.mjs --json <file>
- *
+
  * This is a lint, not a gate: it always exits 0 regardless of how many findings it reports. It only exits 1 when an input file can't be read.
  * A finding is a suggestion, not a verdict — deciding whether to fix it is left to the human or the AI reading the output.
  */
@@ -144,6 +144,16 @@ function isCommentLine(line) {
   return COMMENT_PREFIX_RE.test(line);
 }
 
+// A comment line that carries only the marker itself, no text — "//", "*", "#" with nothing (or just whitespace) after it.
+function isEmptyCommentMarkerLine(line) {
+  return isCommentLine(line) && stripCommentPrefix(line).trim() === "";
+}
+
+// A comment line with real text content, as opposed to an empty marker line or a non-comment line.
+function isNonEmptyCommentLine(line) {
+  return isCommentLine(line) && stripCommentPrefix(line).trim() !== "";
+}
+
 function hasExtension(path, extensions) {
   const lower = path.toLowerCase();
   return extensions.some((ext) => lower.endsWith(ext));
@@ -170,6 +180,26 @@ function scanFile(path) {
     }
     if (inCodeFence) continue;
     if (TABLE_ROW_RE.test(line)) continue;
+
+    // A bare comment marker between two real comment lines is being used as a paragraph separator, but that's not how comments actually get written by hand — real code uses either an unmarked blank line or no separator at all (issue #2).
+    if (
+      !isMarkdown &&
+      isEmptyCommentMarkerLine(line) &&
+      i > 0 &&
+      i + 1 < lines.length &&
+      isNonEmptyCommentLine(lines[i - 1]) &&
+      isNonEmptyCommentLine(lines[i + 1])
+    ) {
+      findings.push({
+        file: path,
+        line: i + 1,
+        reason:
+          "bare comment marker used as a paragraph separator — use an unmarked blank line or no separator at all",
+        snippet: line.trim(),
+        next_snippet: lines[i + 1].trim(),
+      });
+    }
+
     // In a non-Markdown source file, only comment lines are prose; actual code is never a candidate (it isn't sentences at all, and comparing code line N to code line N+1 produces constant false positives).
     if (!isMarkdown && !isCommentLine(line)) continue;
     if (i + 1 >= lines.length) continue;

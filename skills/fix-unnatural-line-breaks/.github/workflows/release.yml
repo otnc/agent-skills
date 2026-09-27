@@ -8,7 +8,7 @@ on:
         required: true
 
 # This Skill isn't an npm package — there's no package.json to bump and nothing gets published to a registry. "Releasing" just means tagging the reviewed commit and creating a GitHub Release whose notes are the commit subjects since the previous tag.
-#
+
 # We build notes from `git log` instead of `gh release create --generate-notes` because this repo is pushed to directly rather than through pull requests, and --generate-notes only has content to work with when there are merged PRs since the last tag — otherwise it produces a release body with nothing but a "Full Changelog" comparison link.
 permissions:
   contents: write
