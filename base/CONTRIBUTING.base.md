@@ -6,6 +6,7 @@ This repository is a generated mirror of otnc's `skills_*` skill repositories. E
 <!-- sources-list:start -->
 - [otnc/skills_ai-agent-saving-tech](https://github.com/otnc/skills_ai-agent-saving-tech) ([MIT](https://github.com/otnc/skills_ai-agent-saving-tech/blob/main/LICENSE))
 - [otnc/skills_fix-unnatural-line-breaks](https://github.com/otnc/skills_fix-unnatural-line-breaks) ([MIT](https://github.com/otnc/skills_fix-unnatural-line-breaks/blob/main/LICENSE))
+- [otnc/skills_japanese-style](https://github.com/otnc/skills_japanese-style) ([MIT](https://github.com/otnc/skills_japanese-style/blob/main/LICENSE))
 <!-- sources-list:end -->
 
 ## Adding a new skill repository
@@ -61,6 +62,7 @@ The skill list sections in `base/README.base.md` and the source list in `base/CO
 <!-- sources-list:start -->
 - [otnc/skills_ai-agent-saving-tech](https://github.com/otnc/skills_ai-agent-saving-tech) ([MIT](https://github.com/otnc/skills_ai-agent-saving-tech/blob/main/LICENSE))
 - [otnc/skills_fix-unnatural-line-breaks](https://github.com/otnc/skills_fix-unnatural-line-breaks) ([MIT](https://github.com/otnc/skills_fix-unnatural-line-breaks/blob/main/LICENSE))
+- [otnc/skills_japanese-style](https://github.com/otnc/skills_japanese-style) ([MIT](https://github.com/otnc/skills_japanese-style/blob/main/LICENSE))
 <!-- sources-list:end -->
 
 ## 新しいスキルリポジトリを追加する
