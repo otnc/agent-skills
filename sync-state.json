@@ -17,6 +17,17 @@
       },
       "syncedAt": "2026-09-27T07:52:48Z"
     },
+    "otnc/skills_ajimi-review": {
+      "tag": "v0.1.0",
+      "dirs": [
+        "ajimi-review"
+      ],
+      "license": {
+        "spdxId": "MIT",
+        "url": "https://github.com/otnc/skills_ajimi-review/blob/main/LICENSE"
+      },
+      "syncedAt": "2026-11-15T16:48:05Z"
+    },
     "otnc/skills_fix-unnatural-line-breaks": {
       "tag": "v0.5.0",
       "dirs": [
