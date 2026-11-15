@@ -7,6 +7,7 @@ This repository is a generated mirror of otnc's `skills_*` skill repositories. E
 <!-- sources-list:start -->
 
 - [otnc/skills\_ai-agent-saving-tech](https://github.com/otnc/skills_ai-agent-saving-tech) ([MIT](https://github.com/otnc/skills_ai-agent-saving-tech/blob/main/LICENSE))
+- [otnc/skills\_ajimi-review](https://github.com/otnc/skills_ajimi-review) ([MIT](https://github.com/otnc/skills_ajimi-review/blob/main/LICENSE))
 - [otnc/skills\_fix-unnatural-line-breaks](https://github.com/otnc/skills_fix-unnatural-line-breaks) ([MIT](https://github.com/otnc/skills_fix-unnatural-line-breaks/blob/main/LICENSE))
 - [otnc/skills\_japanese-style](https://github.com/otnc/skills_japanese-style) ([MIT](https://github.com/otnc/skills_japanese-style/blob/main/LICENSE))
 

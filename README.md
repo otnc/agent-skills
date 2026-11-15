@@ -32,6 +32,7 @@ npx skills add otnc/agent-skills@token-saver -a claude-code -a codex
 | `token-saver-copilot` | [otnc/skills\_ai-agent-saving-tech](https://github.com/otnc/skills_ai-agent-saving-tech) | [MIT](https://github.com/otnc/skills_ai-agent-saving-tech/blob/main/LICENSE) |
 | `token-saver-cursor` | [otnc/skills\_ai-agent-saving-tech](https://github.com/otnc/skills_ai-agent-saving-tech) | [MIT](https://github.com/otnc/skills_ai-agent-saving-tech/blob/main/LICENSE) |
 | `token-saver-opencode` | [otnc/skills\_ai-agent-saving-tech](https://github.com/otnc/skills_ai-agent-saving-tech) | [MIT](https://github.com/otnc/skills_ai-agent-saving-tech/blob/main/LICENSE) |
+| `ajimi-review` | [otnc/skills\_ajimi-review](https://github.com/otnc/skills_ajimi-review) | [MIT](https://github.com/otnc/skills_ajimi-review/blob/main/LICENSE) |
 | `fix-unnatural-line-breaks` | [otnc/skills\_fix-unnatural-line-breaks](https://github.com/otnc/skills_fix-unnatural-line-breaks) | [MIT](https://github.com/otnc/skills_fix-unnatural-line-breaks/blob/main/LICENSE) |
 | `japanese-style` | [otnc/skills\_japanese-style](https://github.com/otnc/skills_japanese-style) | [MIT](https://github.com/otnc/skills_japanese-style/blob/main/LICENSE) |
 
