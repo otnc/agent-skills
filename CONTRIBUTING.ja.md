@@ -10,6 +10,7 @@
 - [otnc/skills\_ajimi-review](https://github.com/otnc/skills_ajimi-review) ([MIT](https://github.com/otnc/skills_ajimi-review/blob/main/LICENSE))
 - [otnc/skills\_fix-unnatural-line-breaks](https://github.com/otnc/skills_fix-unnatural-line-breaks) ([MIT](https://github.com/otnc/skills_fix-unnatural-line-breaks/blob/main/LICENSE))
 - [otnc/skills\_japanese-style](https://github.com/otnc/skills_japanese-style) ([MIT](https://github.com/otnc/skills_japanese-style/blob/main/LICENSE))
+- [otnc/skills\_maketest](https://github.com/otnc/skills_maketest) ([MIT](https://github.com/otnc/skills_maketest/blob/main/LICENSE))
 
 <!-- sources-list:end -->
 

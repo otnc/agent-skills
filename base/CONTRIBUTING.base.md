@@ -8,6 +8,7 @@ This repository is a generated mirror of otnc's `skills_*` skill repositories. E
 - [otnc/skills_ajimi-review](https://github.com/otnc/skills_ajimi-review) ([MIT](https://github.com/otnc/skills_ajimi-review/blob/main/LICENSE))
 - [otnc/skills_fix-unnatural-line-breaks](https://github.com/otnc/skills_fix-unnatural-line-breaks) ([MIT](https://github.com/otnc/skills_fix-unnatural-line-breaks/blob/main/LICENSE))
 - [otnc/skills_japanese-style](https://github.com/otnc/skills_japanese-style) ([MIT](https://github.com/otnc/skills_japanese-style/blob/main/LICENSE))
+- [otnc/skills_maketest](https://github.com/otnc/skills_maketest) ([MIT](https://github.com/otnc/skills_maketest/blob/main/LICENSE))
 <!-- sources-list:end -->
 
 ## Adding a new skill repository
@@ -65,6 +66,7 @@ The skill list sections in `base/README.base.md` and the source list in `base/CO
 - [otnc/skills_ajimi-review](https://github.com/otnc/skills_ajimi-review) ([MIT](https://github.com/otnc/skills_ajimi-review/blob/main/LICENSE))
 - [otnc/skills_fix-unnatural-line-breaks](https://github.com/otnc/skills_fix-unnatural-line-breaks) ([MIT](https://github.com/otnc/skills_fix-unnatural-line-breaks/blob/main/LICENSE))
 - [otnc/skills_japanese-style](https://github.com/otnc/skills_japanese-style) ([MIT](https://github.com/otnc/skills_japanese-style/blob/main/LICENSE))
+- [otnc/skills_maketest](https://github.com/otnc/skills_maketest) ([MIT](https://github.com/otnc/skills_maketest/blob/main/LICENSE))
 <!-- sources-list:end -->
 
 ## 新しいスキルリポジトリを追加する
