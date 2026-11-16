@@ -1,0 +1,9 @@
+# Suite cost and reliability
+
+Classify tests by what they exercise and by the resources they need. A fast integration test can cost less than a slow unit test. Pure tests are a good home for decision rules; local services are appropriate when the integration is the behavior; real browsers and deployed components can verify wiring or user journeys no cheaper check can see. Use the project's resource limits and CI job budgets rather than a universal layer ratio or test count.
+
+- In the edit loop, run the relevant file or cases. Before handoff, run the checks required for the change or explain which still need CI. Keep tests that validate distinct risks; move a check to a cheaper layer only after preserving the evidence it provided.
+- Profile with the existing runner before optimizing. Compare wall time under the same command, environment, and worker settings. Separate setup, fixture construction, and test execution where the runner exposes them. Reuse expensive resources only with state isolation; investigate contention before increasing parallelism.
+- Replace fixed delays with bounded polling of a meaningful state or a signal the code exposes. Make tests pass in isolation and together. Control time, randomness, locale, and shared state where they affect the result. Keep the seed or run order for failures.
+- Stress the failure mode you suspect: run reordered tests for leaked state, exercise parallel runs for contention, and repeat timing-sensitive tests under representative conditions. Report runs and failures as observations; a handful of green runs is not evidence of a zero flake rate. If a change exposes an existing flake, preserve the repro and report it instead of hiding the failure with retries.
+- Keep costly browser matrices, fuzzing, and wide mutation runs within the project's CI policy. When proposing a slower scheduled job, specify the risk it covers, the cost, and what still runs per change.
