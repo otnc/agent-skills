@@ -40,7 +40,7 @@
       "syncedAt": "2026-09-27T07:52:48Z"
     },
     "otnc/skills_japanese-style": {
-      "tag": "v0.4.0",
+      "tag": "v0.5.0",
       "dirs": [
         "japanese-style"
       ],
@@ -48,7 +48,7 @@
         "spdxId": "MIT",
         "url": "https://github.com/otnc/skills_japanese-style/blob/main/LICENSE"
       },
-      "syncedAt": "2026-11-16T22:57:32Z"
+      "syncedAt": "2026-11-25T22:38:54Z"
     },
     "otnc/skills_maketest": {
       "tag": "v0.1.0",
