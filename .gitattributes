@@ -1,7 +1,9 @@
 * text=auto eol=lf
 
-# Vendored mirror content produced by cmd/sync — keep out of language stats and collapse in diffs
-skills/** linguist-generated
+# Skills mirrored by cmd/sync — count their Markdown in language stats
+skills/**/*.md linguist-detectable
+
+# Sync state written by cmd/sync — keep out of language stats and collapse in diffs
 sync-state.json linguist-generated
 
 # The kiritan agent skill installed by the skills CLI — tooling, not this repo's code
